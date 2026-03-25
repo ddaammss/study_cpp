@@ -195,6 +195,57 @@ inline int add(int a, int b) { return a + b; }
 
 ---
 
+## 함수 템플릿 (Function Template)
+
+- 타입만 다르고 로직이 같은 함수를 **하나의 템플릿**으로 정의
+- 컴파일 타임에 호출된 타입에 맞게 실제 함수를 자동 생성
+
+```cpp
+template <class T>
+T sum(T a, T b) {
+    return a + b;
+}
+
+sum(3, 4);        // T = int  → int sum(int, int) 생성
+sum(1.2, 3.4);    // T = double → double sum(double, double) 생성
+```
+
+- `template <class T>` 와 `template <typename T>` 는 완전히 동일한 의미
+
+### 타입 파라미터 여러 개 (다른 타입 두 개를 받을 때)
+
+```cpp
+template <class T1, class T2>
+auto sum(T1 a, T2 b) -> decltype(a + b) {
+    return a + b;
+}
+
+sum(3, 1.5f);   // T1=int, T2=float → 반환타입 float
+```
+
+- `-> decltype(a + b)`: `a + b` 의 결과 타입을 반환 타입으로 자동 추론
+
+### 오버로딩 모호성 주의
+
+```cpp
+template <class T>   Any sum(T, T);      // (1)
+template <class T>   Any sum(int, T);    // (2)
+
+sum(1, 2);  // (1): T=int, (2): T=int 둘 다 매칭 → ambiguous 에러!
+```
+
+- 두 템플릿이 같은 타입으로 동시에 매칭되면 컴파일 에러
+- 해결: 타입 파라미터 두 개짜리 하나로 통합
+
+### 함수 원형과 정의 분리 시 주의
+
+```cpp
+// 전방 선언과 정의의 decltype 표현식이 달라지면 링커 에러 발생
+// → 템플릿은 정의를 main() 위에 두거나 헤더파일에 작성하는 것이 안전
+```
+
+---
+
 ## C++ vs Java 비교
 
 | 개념 | C++ | Java |
