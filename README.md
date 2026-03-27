@@ -6,14 +6,12 @@
 - 파일이 많아지면 빌드 시스템 사용
   - **Make**: Makefile 작성, 변경된 파일만 재컴파일
   - **CMake**: CMakeLists.txt → Makefile 생성 → make → g++ → 실행파일
-
 ---
 
 ## 자료형
 
 - `auto`: 컴파일러가 타입을 자동 추론 (컴파일 타임에 확정, 이후 변경 불가)
 - `climits`: 각 자료형의 최솟값/최댓값 상수 제공
-
 ---
 
 ## 포인터
@@ -130,6 +128,61 @@ add(a);  // a == 15
 
 - 현업에서는 `class`를 훨씬 더 많이 사용
 - 큰 객체 전달 시 `const &` 사용 권장 (복사 비용 절감 + 수정 불가)
+
+### struct vs class 용도 구분
+
+| | struct | class |
+|--|--------|-------|
+| 용도 | 데이터만 묶을 때 | 데이터 + 비즈니스 로직 |
+| 자바 비유 | DTO / record | 도메인 모델 |
+
+---
+
+## 캡슐화 / 추상화
+
+```cpp
+class Stock {
+private:
+    int shares;
+    void set_total() { ... }  // 내부 구현 숨김
+
+public:
+    void buy(int, float);     // 외부에 노출할 것만
+    void sell(int, float);
+};
+```
+
+- **캡슐화**: `private`/`public`으로 데이터와 구현을 숨기는 것
+- **추상화**: "어떻게 구현되는지는 숨기고, 무엇을 할 수 있는지만 노출"
+- `set_total()`은 내부 계산용이라 `private` → 외부에서 호출 불가
+- 사용자는 `buy`, `sell`만 쓰면 되고 내부 동작은 알 필요 없음
+
+### 현업 클래스 파일 구조
+
+```
+Stock.h    ← 선언(원형)만 작성
+Stock.cpp  ← 구현 작성 (Stock::buy() {...})
+main.cpp   ← 객체 생성 및 호출 (Stock temp; temp.buy(...))
+```
+
+- `Stock::`은 클래스 밖에서 구현할 때 소속을 명시하는 것
+- 자바는 클래스 안에 바로 구현, C++은 `.h`/`.cpp` 분리 시 `Stock::` 필요
+
+### include guard
+
+```cpp
+// 방식 1 - 전통적
+#ifndef STOCK_H
+#define STOCK_H
+...
+#endif
+
+// 방식 2 - 현대 C++ 권장
+#pragma once
+```
+
+- 같은 헤더가 여러 곳에서 include 될 때 중복 선언 방지
+- 컴파일러가 내부적으로 정의 여부를 확인해 이미 include 됐으면 스킵
 
 ---
 
