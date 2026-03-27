@@ -6,15 +6,11 @@
 - 파일이 많아지면 빌드 시스템 사용
   - **Make**: Makefile 작성, 변경된 파일만 재컴파일
   - **CMake**: CMakeLists.txt → Makefile 생성 → make → g++ → 실행파일
-- `.vscode/tasks.json`: VSCode 전용 빌드 단축키 설정 (실제 빌드와 무관)
 
 ---
 
 ## 자료형
 
-- `short`, `int`, `long`, `long long`: 정수형
-- `float`, `double`: 부동소수점 (실수형)
-- `unsigned`: 음수 없이 양수 범위를 두 배로 확장
 - `auto`: 컴파일러가 타입을 자동 추론 (컴파일 타임에 확정, 이후 변경 불가)
 - `climits`: 각 자료형의 최솟값/최댓값 상수 제공
 
@@ -255,3 +251,17 @@ sum(1, 2);  // (1): T=int, (2): T=int 둘 다 매칭 → ambiguous 에러!
 | enum 스코프 | `Color::RED` | `Color.RED` |
 | 범위 for문 | `for (auto& x : list)` | `for (int x : list)` |
 | 배열 | `std::vector` | `ArrayList` |
+
+## 분할 컴파일
+- 분할 컴파일(Separate Compilation)**은 프로그램을 여러 .cpp 파일로 나눠서 각각 독립적으로 컴파일한 뒤, 마지막에 링커(linker)가 하나의 실행파일로 합치는 방식
+
+```cpp
+main.cpp   →  컴파일  →  main.o   ┐
+math.cpp   →  컴파일  →  math.o   ├→  링커(ld)  →  실행파일
+utils.cpp  →  컴파일  →  utils.o  ┘
+```
+### 쓰는 이유
+- 변경된 파일만 재컴파일 — math.cpp만 수정하면 math.o만 다시 만들면 됨 (빌드 속도 향상)
+- 역할 분리 — 파일마다 책임 분리, 협업 시 충돌 감소
+- 헤더파일(.h) 이 필요한 이유가 바로 이것 — 다른 파일에서 함수/클래스를 쓰려면 선언을 공유해야 함
+
